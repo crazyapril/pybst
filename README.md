@@ -2,7 +2,7 @@
 
 Use pybst to navigate BST data.
 
-```
+```console
 >>> import pybst
 >>> cyclone = pybst.BST('haiyan')
 3 storm(s) found.
@@ -52,4 +52,11 @@ Select a storm:5
 ...
 2016    0.0     0.0     0.0     0.0     0.0     0.0     29.6225 49.8425 74.215  75.21   11.755  18.425  259.0700
 2017    0.0     0.0     0.0     1.045   0.0     0.97    41.6575 43.4025 26.7325 33.4025 5.875   0.0 153.0850
+>>> pybst.season_view(2017)
+WP012017        NOTNAMED        30kt    1001hPa TD      01/08
+WP022017        NOTNAMED        25kt    1005hPa TD      04/14
+WP032017        MUIFA           40kt    1002hPa TS      04/26
+...
+WP302017        HAIKUI          40kt    1002hPa TS      11/10
+WP312017        KIROGI          40kt    1000hPa TS      11/18
 ```
