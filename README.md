@@ -2,7 +2,7 @@
 
 Use pybst to navigate BST data.
 
-```console
+```pycon
 >>> import pybst
 >>> cyclone = pybst.BST('haiyan')
 3 storm(s) found.
@@ -33,6 +33,10 @@ ACE: 38.1925
 Movement Length: 6730.0km
 >>> pybst.ace('201331')
 38.1925
+>>> pybst.jtwctojma('201331')
+'201330J'
+>>> pybst.stormname('201520E')
+'PATRICIA'
 >>> pybst.BST('patricia').peak()
 5 storm(s) found.
 1. 197016E
