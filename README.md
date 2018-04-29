@@ -2,7 +2,7 @@
 
 Use pybst to navigate BST data.
 
-```py
+```
 >>> import pybst
 >>> cyclone = pybst.BST('haiyan')
 3 storm(s) found.
