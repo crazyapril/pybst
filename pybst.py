@@ -368,13 +368,15 @@ class BDECK:
         else:
             self.time, self.wind, self.lat, self.lon, self.pres, self.level,self.eyed = '', 0, 0.0, 0.0, 0, '',0
 
-    def position(self, line):
+    def position(self, line, alter_lon_range=False):
         lat = int(line[35:38]) / 10.0
         lon = int(line[41:45]) / 10.0
         if line[38] == 'S':
             lat = -lat
         if line[45] == 'W':
             lon = -lon
+            if alter_lon_range:
+                lon += 360
         return lat, lon
 
     def windline(self):
@@ -383,7 +385,19 @@ class BDECK:
             self.readline()
         return self.wind
 
-    def datalist(self, tropical=False, allow_not_round=False):
+    def datalist(self, tropical=False, allow_intermediate=False, alter_lon_range=False):
+        """Return list of info about the storm during its lifetime. Include time, lat, lon,
+        msw and level info.
+
+        Params:
+            tropical <bool> - Default False. If True, will only return data when the storm 
+                has tropical characteristics, non-tropical data will be filtered out.
+            allow_intermediate <bool> - Default False. If True, will not remove data from 
+                intermediate advisories (e.g. 03Z and 15Z).
+            alter_lon_range <bool> - Default False. Default lon range is -180-180. If True,
+                lon range will be 0-360. West longitudes will be shifted from -180-0 to 
+                180-360.
+        """
         line = self.f.readline()
         pasttime = ''
         windlist = []
@@ -391,14 +405,14 @@ class BDECK:
         timelist, levellist = [], []
         while line:
             nowtime = line[8:18]
-            if nowtime != pasttime and (allow_not_round or nowtime[-2:] in ['00', '06', '12', '18']):
+            if nowtime != pasttime and (allow_intermediate or nowtime[-2:] in ['00', '06', '12', '18']):
                 if not (tropical and line[59:61] in ['EX', 'SS', 'SD']):
                     timelist.append('%s00' % (line[8:18]))
                     if int(line[48:51]) < 300:
                         windlist.append(int(line[48:51]))
                     else:
                         windlist.append(0)
-                    lat, lon = self.position(line)
+                    lat, lon = self.position(line, alter_lon_range=alter_lon_range)
                     latlist.append(lat)
                     lonlist.append(lon)
                     levellist.append(line[59:61])
@@ -406,12 +420,12 @@ class BDECK:
             line = self.f.readline()
         return [timelist, latlist, lonlist, windlist, levellist]
 
-    def get_datalist(self, tropical=False, allow_no_round=False):
-        datalist_condition = tropical, allow_no_round
+    def get_datalist(self, tropical=False, allow_intermediate=False):
+        datalist_condition = tropical, allow_intermediate
         if hasattr(self, 'datalist_cache') and datalist_condition == self.dlcond:
             return self.datalist_cache
         self.dlcond = datalist_condition
-        self.datalist_cache = self.datalist(tropical=tropical, allow_not_round=allow_no_round)
+        self.datalist_cache = self.datalist(tropical=tropical, allow_intermediate=allow_intermediate)
         return self.datalist_cache
 
     def windmax(self):
